@@ -17,8 +17,7 @@ type SongProps = {
 
 export function SongCard({ title, artist, image, id }) {
   return (
-    <Link href={`/audioplayer/${id}`} asChild>
-      <Pressable>
+    <Pressable>
     <View style={styles.cardContainer}>
       <Image
         source={{ uri: image }}
@@ -51,7 +50,6 @@ export function SongCard({ title, artist, image, id }) {
       </View>
     </View>
     </Pressable>
-    </Link>
   );
 }
 

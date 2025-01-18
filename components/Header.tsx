@@ -2,6 +2,8 @@ import { View, Text } from '@/components/Themed';
 import { StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import logo from '@/assets/images/icon.png';
+import { Pressable } from 'react-native';
+import { Link } from 'expo-router';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -11,11 +13,15 @@ export default function Header({ name }: { name: string }) {
     <View style={styles.header}>
       <View style={styles.container}>
         <Text style={styles.headerTitle}>{name}</Text>
+        <Link href="about" asChild>
+        <Pressable>
         <Image
           source={logo}
           placeholder={{ blurhash }}
           style={styles.logo}
         />
+        </Pressable>
+        </Link>
       </View>
     </View>
   );
