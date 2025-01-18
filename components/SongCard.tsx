@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { Pressable } from "react-native";
 import { Entypo } from '@expo/vector-icons';
-
+import { useAudio } from '@/hooks/useAudio'
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
@@ -15,8 +15,9 @@ type SongProps = {
 };
 
 export function SongCard({ title, artist, image, id }) {
+  const { playAudio } = useAudio();
   return (
-    <Pressable>
+    <Pressable onPress={() => playAudio(id, "all")}>
       <View style={{
         flex: 1,
         flexDirection: 'row',

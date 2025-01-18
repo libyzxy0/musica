@@ -9,11 +9,11 @@ import { SongCard } from "@/components/SongCard";
 import { useAudio } from '@/hooks/useAudio'
 
 
-
 export default function Songs() {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
   const {audioFiles: songsData, getPermissions } = useAudio()
+  const { currentAudioPlaying, pauseAudio, playAudio } = useAudio();
   return (
     <SafeAreaView
       style={{
@@ -54,11 +54,12 @@ export default function Songs() {
                 />
               </Button>
               <Button
-                contentContainerStyles={styles.buttonContent}
+              onPress={currentAudioPlaying?.isPlaying ? () => pauseAudio(currentAudioPlaying.id) : () => playAudio(currentAudioPlaying.id)}
+                contentContainerStyles={[styles.buttonContent,{ marginLeft: currentAudioPlaying?.isPlaying ? 0 : 2.5}]}
                 buttonStyles={styles.playButton}
                 accessibilityLabel="Play"
               >
-                <Ionicons name="play" size={28} color="white" />
+                <Ionicons name={currentAudioPlaying?.isPlaying ? 'pause' : 'play'} size={28} color="white" />
               </Button>
             </View>
           </View>
@@ -87,8 +88,7 @@ const styles = StyleSheet.create({
   },
   buttonContent: {
     justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 2.5
+    alignItems: "center"
   },
   shuffleButton: {
     width: 50,

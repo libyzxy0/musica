@@ -5,11 +5,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
-
+import { useAudio } from '@/hooks/useAudio'
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   
 export default function FloatingPlayerWidget() {
+  const { currentAudioPlaying, pauseAudio, playAudio } = useAudio();
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
   return (
@@ -36,7 +37,7 @@ export default function FloatingPlayerWidget() {
         >
           <Image
             source={{
-              uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHPxfpMNgtsXINVS41LwNfUBj32xWxC9ZhxKRL6FW1ZGNnUktRyLkqS0Y2&s=10"
+              uri: currentAudioPlaying?.image
             }}
             placeholder={{ blurhash }}
             style={{
@@ -56,7 +57,7 @@ export default function FloatingPlayerWidget() {
                 paddingTop: 3
               }}
             >
-              {"Pag-Ibig"}
+              {currentAudioPlaying?.title}
             </Text>
             <Text
               style={{
@@ -65,7 +66,7 @@ export default function FloatingPlayerWidget() {
                 color: useThemeColor({}, "secondary"),
               }}
             >
-              {"Sponge-cola"}
+              {currentAudioPlaying?.artist}
             </Text>
           </View>
         </View>
@@ -84,18 +85,19 @@ export default function FloatingPlayerWidget() {
               padding: 0,
               backgroundColor: "transparent"
             }}
-            accessibilityLabel="Shuffle"
+            accessibilityLabel="Favorite"
           >
             <Ionicons name="heart-outline" size={24} color={colorFromProps.primary} />
           </Button>
           <Button
+          onPress={currentAudioPlaying?.isPlaying ? () => pauseAudio(currentAudioPlaying.id) : () => playAudio(currentAudioPlaying.id)}
             buttonStyles={{
               padding: 0,
               backgroundColor: "transparent"
             }}
-            accessibilityLabel="Shuffle"
+            accessibilityLabel="Play/Pause"
           >
-            <Ionicons name="play" size={24} color={colorFromProps.primary} />
+            <Ionicons name={currentAudioPlaying?.isPlaying ? 'pause' : 'play'} size={24} color={colorFromProps.primary} />
           </Button>
         </View>
       </LinearGradient>
