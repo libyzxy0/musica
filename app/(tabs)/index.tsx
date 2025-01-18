@@ -13,7 +13,7 @@ import { useAudio } from '@/hooks/useAudio'
 export default function Songs() {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
-  const {audioFiles: songsData} = useAudio()
+  const {audioFiles: songsData, getPermissions } = useAudio()
   return (
     <SafeAreaView
       style={{

@@ -64,13 +64,13 @@ export default function About() {
           fontFamily: 'Poppins-Regular'
         }}>• Jan Liby Dela Costa <Text style={{
           color: useThemeColor({}, 'primary')
-        }}>lulu master</Text></Text>
+        }}>App Developer</Text></Text>
         <Text style={{
           fontSize: 15,
           fontFamily: 'Poppins-Regular'
         }}>• Marvin Quillo Saik <Text style={{
           color: useThemeColor({}, 'primary')
-        }}>Jabulero</Text></Text>
+        }}>Quality Assurance</Text></Text>
       </View>
       <View style={{
         flex: 1,
