@@ -1,18 +1,24 @@
 import { View, Text, useThemeColor } from "@/components/Themed";
 import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
+import { Pressable } from 'react-native';
+import { Link } from 'expo-router';
+
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 type SongProps = {
+  id: string;
   title: string;
   artist: string;
   image: string;
 };
 
-export function SongCard({ title, artist, image }) {
+export function SongCard({ title, artist, image, id }) {
   return (
+    <Link href={`/audioplayer/${id}`} asChild>
+      <Pressable>
     <View style={styles.cardContainer}>
       <Image
         source={{ uri: image }}
@@ -44,6 +50,8 @@ export function SongCard({ title, artist, image }) {
         </Text>
       </View>
     </View>
+    </Pressable>
+    </Link>
   );
 }
 

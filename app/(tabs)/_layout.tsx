@@ -2,7 +2,7 @@ import React from 'react'
 import { Tabs } from 'expo-router'
 import TabBar from '@/components/TabBar'
 
-const _layout = () => {
+export default function _layout() {
   return (
     <Tabs
         tabBar={props=> <TabBar {...props} />}
@@ -37,5 +37,3 @@ const _layout = () => {
     </Tabs>
   )
 }
-
-export default _layout

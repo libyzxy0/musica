@@ -1,17 +1,26 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { View } from '@/components/Themed'
+import { View } from '@/components/Themed';
 import TabBarButton from '@/components/TabBarButton';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import Colors from '@/constants/Colors'
+import Colors from '@/constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const TabBar = ({ state, descriptors, navigation }) => {
-  
   const theme = useColorScheme() ?? 'light';
   const colorFromProps = Colors[theme];
 
   return (
-    <View style={styles.tabbar}>
+    <LinearGradient
+      colors={
+        theme === 'dark'
+          ? ['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.3)']
+          : ['rgba(255,255,255,0.9)', 'rgba(255,255,255,0.3)'] 
+      }
+      start={{ x: 0.5, y: 1 }}
+      end={{ x: 0.5, y: 0 }}
+      style={styles.tabbar}
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label = options.tabBarLabel || options.title || route.name;
@@ -32,7 +41,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
           />
         );
       })}
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -40,14 +49,14 @@ const styles = StyleSheet.create({
   tabbar: {
     position: 'absolute',
     bottom: 0,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    borderTopLeftRadius: 20, 
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
   },
 });
 
