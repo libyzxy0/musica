@@ -11,27 +11,37 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { AudioProvider } from "@/context/AudioContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-
+import { useThemeColor } from '@/components/Themed'
+import * as SystemUI from 'expo-system-ui';
 import { useAudio } from '@/hooks/useAudio'
+/*
+import TrackPlayer from 'react-native-track-player'
+import { playbackService } from '@/utils/playbackService'
+import { useSetupTrackPlayer } from '@/hooks/useSetupTrackPlayer'
+*/
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+/*TrackPlayer.registerPlaybackService(() => playbackService)*/
+
 export default function RootLayout() {
-  const {audiosLoaded,getAllAudioFiles,getPermissions} = useAudio()
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf")
   });
-  useEffect(() => {
-    const rn = async () => {
-      await getPermissions();
-      await getAllAudioFiles();
-    }
-    rn();
-  }, [])
+  
+  /* Fix for white screen flash when navigating */
+  SystemUI.setBackgroundColorAsync(useThemeColor({}, 'background'))
+  
+  /*
+  useSetupTrackPlayer({
+    onLoad: () => console.log("Track player loaded") //Hide the splash
+  })
+  */
+  
   
   
   useEffect(() => {
@@ -50,7 +60,7 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
-            name="audioplayer/[id]"
+            name="audioplayer"
             options={{ headerShown: false }}
           />
           <Stack.Screen

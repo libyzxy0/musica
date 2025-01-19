@@ -16,7 +16,7 @@ export default function FloatingPlayerWidget() {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
   return (
-    <Pressable onPress={() => router.push(`/audioplayer/${currentAudioPlaying.id}`)}>
+    <Pressable onPress={() => router.push('/audioplayer')}>
     <LinearGradient
         colors={
           theme === "dark"

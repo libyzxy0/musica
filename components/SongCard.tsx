@@ -19,7 +19,7 @@ export function SongCard({ title, artist, image, id }) {
   const { playAudio, currentAudioPlaying } = useAudio();
   return (
     <Pressable
-      onPress={currentAudioPlaying?.id === id ? () => router.push(`/audioplayer/${id}`) : () => playAudio(id, "all")}
+      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, "playlist-7836502")}
       
       style={({ pressed }) => [
         { backgroundColor: "transparent", opacity: pressed ? 0.8 : 1 },
@@ -37,7 +37,6 @@ export function SongCard({ title, artist, image, id }) {
           style={{
             width: 45,
             height: 45,
-            resizeMode: "contain",
             borderRadius: 8
           }}
         />

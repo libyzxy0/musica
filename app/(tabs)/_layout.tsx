@@ -3,7 +3,7 @@ import { Tabs } from "expo-router";
 import TabBar from "@/components/TabBar";
 import { useAudio } from "@/hooks/useAudio";
 import { ActivityIndicator } from "react-native";
-import { View,useThemeColor } from "@/components/Themed";
+import { View, useThemeColor } from "@/components/Themed";
 
 export default function _layout() {
   const { audiosLoaded } = useAudio();
@@ -15,7 +15,7 @@ export default function _layout() {
           justifyContent: "center"
         }}
       >
-        <ActivityIndicator color={useThemeColor({}, 'primary')} size="large" />
+        <ActivityIndicator color={useThemeColor({}, "primary")} size="large" />
       </View>
     );
   }
