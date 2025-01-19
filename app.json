@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "musica",
+    "name": "Musica",
     "slug": "musica",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,18 +10,23 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "contentFit": "contain",
+      "backgroundColor": "#ff004d"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "permissions": ["android.permission.WAKE_LOCK"],
+      "permissions": [
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.libyzxy0.musica"
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +39,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "380307f5-dce8-4f15-9ce0-94d0d557d072"
+      }
     }
   }
 }

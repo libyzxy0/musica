@@ -35,7 +35,7 @@ type AudioContextType = {
   getAllAudioFiles: () => Promise<void>;
   handleNext: () => Promise<void>;
   handlePrevious: () => Promise<void>;
-  audiosLoaded: boolean;
+  audioLoading: boolean;
 };
 
 const defaultValues: AudioContextType = {
@@ -46,7 +46,7 @@ const defaultValues: AudioContextType = {
   handleNext: async () => {},
   handlePrevious: async () => {},
   setPosition: async () => {},
-  audiosLoaded: false
+  audioLoading: false
 };
 
 export const AudioContext = createContext<AudioContextType>(defaultValues);
@@ -57,7 +57,7 @@ type AudioProviderProps = {
 
 export const AudioProvider = ({ children }: AudioProviderProps) => {
   const [audioFiles, setAudioFiles] = useState<AudioType[]>([]);
-  const [audiosLoaded, setAudioLoaded] = useState(false);
+  const [audioLoading, setAudioLoading] = useState(true);
   const [isGranted, setIsGranted] = useState(false);
   const [currentAudioPlaying, setCurrentAudioPlaying] =
     useState<CurrentPlayingAudioType | null>(null);
@@ -84,69 +84,77 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
 
   const getAllAudioFiles = async () => {
     try {
-      if(audioFiles) {
-        console.log("Skip to load audio files")
-        return;
-      }
+      setAudioLoading(true);
       console.log("Loading audio files...");
       const media = await MediaLibrary.getAssetsAsync({
         mediaType: "audio",
-        first: 1000
+        first: 500
       });
+
       if (!media.assets?.length) {
         console.log("No audio files found.");
+        setAudioLoading(false);
         return;
       }
 
-      /* Get all audio files metadata from asset */
-      const audioFiles = (
-        await Promise.all(
-          media.assets.map(async asset => {
-            try {
-              const { metadata } = await getMetadata(asset.uri);
-              return {
-                title: metadata.name || asset.filename,
-                id: asset.id,
-                uri: asset.uri,
-                artist: metadata.artist || "Unknown Artist",
-                image: metadata.artwork || null
-              };
-            } catch {
-              return null;
+      console.log("Assets loaded, processing metadata...");
+
+      for (const asset of media.assets) {
+        try {
+          if(asset.uri.endsWith(".adt")) return;
+          const { metadata } = await getMetadata(asset.uri);
+          console.log("metadata:",metadata)
+    
+          const newAudioFile: AudioType = {
+            id: asset.id,
+            uri: asset.uri,
+            title: metadata.artwork ? metadata.name : (asset.filename.split(".mp3"))[0],
+            artist: metadata.artwork ? metadata.artist : "Unknown Artist",
+            image: metadata.artwork || null
+          };
+
+          setAudioFiles(prevAudioFiles => {
+            if (prevAudioFiles.some(file => file.id === newAudioFile.id)) {
+              return prevAudioFiles;
             }
-          })
-        )
-      ).filter(Boolean);
+            return [...prevAudioFiles, newAudioFile].sort((a, b) =>
+              a.title.localeCompare(b.title)
+            );
+          });
 
-      /* Sort this fucking audios alphabetically */
-      const sortedAudioFiles: AudioType[] = audioFiles.sort(
-        (a: AudioType, b: AudioType) => a.title.localeCompare(b.title)
-      );
+          console.log(`Loaded metadata for: ${newAudioFile.title}`);
+        } catch (error) {
+          console.error(
+            `Error fetching metadata for asset ${asset.id}:`,
+            error
+          );
+        }
+      }
 
-      setAudioFiles(sortedAudioFiles);
-      setAudioLoaded(true);
-      console.log("Audio files loaded...");
+      console.log("Finished processing audio files.");
     } catch (error) {
       console.error("Error fetching audio files:", error);
+    } finally {
+      setAudioLoading(false);
     }
   };
-  
- const handlePlaybackFinish = async (id: string, playedFrom: string) => {
-   const indx = audioFiles.findIndex((a) => a.id === id);
-   playAudio(audioFiles[indx + 1].id, playedFrom, true)
- }
- 
- const handleNext = async () => {
-   const { id, playedFrom } = currentAudioPlaying;
-   const indx = audioFiles.findIndex((a) => a.id === id);
-   playAudio(audioFiles[indx + 1].id, playedFrom, false);
- }
- 
- const handlePrevious = async () => {
-   const { id, playedFrom } = currentAudioPlaying;
-   const indx = audioFiles.findIndex((a) => a.id === id);
-   playAudio(audioFiles[indx - 1].id, playedFrom, false);
- }
+
+  const handlePlaybackFinish = async (id: string, playedFrom: string) => {
+    const indx = audioFiles.findIndex(a => a.id === id);
+    playAudio(audioFiles[indx + 1].id, playedFrom, true);
+  };
+
+  const handleNext = async () => {
+    const { id, playedFrom } = currentAudioPlaying;
+    const indx = audioFiles.findIndex(a => a.id === id);
+    playAudio(audioFiles[indx + 1].id, playedFrom, false);
+  };
+
+  const handlePrevious = async () => {
+    const { id, playedFrom } = currentAudioPlaying;
+    const indx = audioFiles.findIndex(a => a.id === id);
+    playAudio(audioFiles[indx - 1].id, playedFrom, false);
+  };
 
   const playAudio = async (id: string, playedFrom?: string, m: boolean) => {
     try {
@@ -158,7 +166,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         }));
         return;
       }
-      
+
       if (sound && !m) {
         await sound.stopAsync();
         await sound.unloadAsync();
@@ -166,7 +174,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
       }
 
       const audioToPlay = audioFiles.find(item => item.id === id);
-  
+
       if (!audioToPlay) {
         console.error("Audio file not found for id:", id);
         return;
@@ -183,7 +191,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         { uri: audioToPlay.uri },
         { shouldPlay: true }
       );
-      
+
       setSound(nSound);
 
       setCurrentAudioPlaying({
@@ -200,12 +208,11 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
       });
 
       nSound.setOnPlaybackStatusUpdate(playbackStatus => {
-        
         if (playbackStatus.isLoaded) {
           if (playbackStatus.didJustFinish) {
-            handlePlaybackFinish(id, playedFrom)
+            handlePlaybackFinish(id, playedFrom);
           }
-          
+
           setCurrentAudioPlaying(prev => ({
             ...prev,
             isPlaying: playbackStatus.isPlaying,
@@ -242,12 +249,12 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
 
   const setPosition = async (millis: number) => {
     await sound.setPositionAsync(millis);
-  }
-  
+  };
+
   useEffect(() => {
-     getPermissions(); 
-     getAllAudioFiles();
-  }, [])
+    getPermissions();
+    getAllAudioFiles();
+  }, []);
 
   return (
     <AudioContext.Provider
@@ -258,7 +265,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         getAllAudioFiles,
         handleNext,
         handlePrevious,
-        audiosLoaded,
+        audioLoading,
         playAudio,
         pauseAudio,
         setPosition

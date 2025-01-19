@@ -1,7 +1,7 @@
 import { View, Text } from '@/components/Themed';
 import { StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
-import logo from '@/assets/images/icon.png';
+import logo from '@/assets/images/adaptive-icon.png';
 import { Pressable } from 'react-native';
 import { Link } from 'expo-router';
 

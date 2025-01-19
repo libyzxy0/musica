@@ -7,6 +7,7 @@ import { DurationSlider } from "@/components/DurationSlider";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import {StatusBar} from 'react-native';
+import logo from '@/assets/images/icon.png'
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -110,7 +111,7 @@ export default function MusicPlayer() {
           }}
         >
           <Image
-            source={{ uri: currentAudioPlaying?.image }}
+            source={currentAudioPlaying?.image ? { uri: currentAudioPlaying?.image } : logo}
             placeholder={{ blurhash }}
             style={{
               width: 300,

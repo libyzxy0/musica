@@ -4,6 +4,7 @@ import Colors from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
+import logo from '@/assets/images/icon.png'
 import { StyleSheet } from "react-native";
 import { useAudio } from '@/hooks/useAudio'
 import { router } from 'expo-router';
@@ -39,9 +40,7 @@ export default function FloatingPlayerWidget() {
           }}
         >
           <Image
-            source={{
-              uri: currentAudioPlaying?.image
-            }}
+            source={currentAudioPlaying?.image ? { uri: currentAudioPlaying?.image } : logo}
             placeholder={{ blurhash }}
             style={{
               width: 40,

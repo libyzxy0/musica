@@ -12,7 +12,7 @@ export default function Songs() {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
   const { audioFiles: songsData, getPermissions } = useAudio();
-  const { currentAudioPlaying, pauseAudio, playAudio } = useAudio();
+  const { currentAudioPlaying, pauseAudio, playAudio, audioLoading } = useAudio();
   return (
     <SafeAreaView
       style={{
@@ -37,7 +37,7 @@ export default function Songs() {
             <View>
               <Text style={styles.headerTitle}>All Songs</Text>
               <Text style={{ fontSize: 14, color: colorFromProps.secondary }}>
-                {songsData.length} songs
+                {audioLoading ? 'Loading songs...' : `${songsData.length} songs`}
               </Text>
             </View>
             <View style={styles.buttonCon}>

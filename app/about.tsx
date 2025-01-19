@@ -1,6 +1,6 @@
 import { View, Text, useThemeColor } from '@/components/Themed'
 import { Image } from 'expo-image';
-import logo from '@/assets/images/icon.png';
+import logo from '@/assets/images/adaptive-icon.png';
 import { AntDesign } from '@expo/vector-icons';
 import { ExternalLink } from '@/components/ExternalLink'
 import { ScrollView } from 'react-native'
