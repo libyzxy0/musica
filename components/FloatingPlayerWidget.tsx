@@ -6,6 +6,8 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { useAudio } from '@/hooks/useAudio'
+import { router } from 'expo-router';
+import { Pressable } from "react-native";
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   
@@ -14,6 +16,7 @@ export default function FloatingPlayerWidget() {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
   return (
+    <Pressable onPress={() => router.push(`/audioplayer/${currentAudioPlaying.id}`)}>
     <LinearGradient
         colors={
           theme === "dark"
@@ -100,7 +103,18 @@ export default function FloatingPlayerWidget() {
             <Ionicons name={currentAudioPlaying?.isPlaying ? 'pause' : 'play'} size={24} color={colorFromProps.primary} />
           </Button>
         </View>
+          <View style={{
+          position: 'absolute',
+          bottom: 2,
+          height: 2,
+          borderRadius: 6,
+          backgroundColor: useThemeColor({}, 'primary'),
+          width: `${parseInt(currentAudioPlaying?.durationPercentage)}%`,
+          left: 5
+        }}></View>
+        
       </LinearGradient>
+      </Pressable>
   )
 }
 

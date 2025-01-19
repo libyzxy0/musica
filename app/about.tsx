@@ -9,6 +9,7 @@ export default function About() {
   return (
     <ScrollView style={{
       flex: 1,
+      backgroundColor: useThemeColor({}, 'background')
     }}>
       <View style={{
         marginTop: 20,
@@ -41,13 +42,11 @@ export default function About() {
           fontFamily: 'Poppins-Regular'
         }}><Text style={{
           color: useThemeColor({}, 'primary')
-        }}>Musica</Text> is a simple and efficient <Text style={{
+        }}>Musica</Text> is simple, efficient, and open-source <Text style={{
           color: useThemeColor({}, 'primary')
-        }}>music player</Text> designed for <Text style={{
+        }}>music player</Text> designed for offline playback of music files stored on your device. With a clean and user-friendly interface, it offers an <Text style={{
           color: useThemeColor({}, 'primary')
-        }}>offline playback of music files</Text> stored on your device. With a clean and user-friendly interface, it offers an <Text style={{
-          color: useThemeColor({}, 'primary')
-        }}>ad-free</Text> experience, letting you enjoy your favorite songs without interruptions.</Text>
+        }}>ad-free experience</Text>, letting you enjoy your favorite songs without interruptions.</Text>
       </View>
       <View style={{
         marginHorizontal: 20,

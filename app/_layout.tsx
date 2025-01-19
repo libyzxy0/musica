@@ -12,20 +12,31 @@ import "react-native-reanimated";
 import { AudioProvider } from "@/context/AudioContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+import { useAudio } from '@/hooks/useAudio'
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const {audiosLoaded,getAllAudioFiles,getPermissions} = useAudio()
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf")
   });
-
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    const rn = async () => {
+      await getPermissions();
+      await getAllAudioFiles();
+    }
+    rn();
+  }, [])
+  
+  
+  useEffect(() => {
+    if(loaded) {
+      SplashScreen.hideAsync()
     }
   }, [loaded]);
 

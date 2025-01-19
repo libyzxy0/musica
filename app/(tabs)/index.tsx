@@ -6,13 +6,12 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SongCard } from "@/components/SongCard";
-import { useAudio } from '@/hooks/useAudio'
-
+import { useAudio } from "@/hooks/useAudio";
 
 export default function Songs() {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
-  const {audioFiles: songsData, getPermissions } = useAudio()
+  const { audioFiles: songsData, getPermissions } = useAudio();
   const { currentAudioPlaying, pauseAudio, playAudio } = useAudio();
   return (
     <SafeAreaView
@@ -54,17 +53,31 @@ export default function Songs() {
                 />
               </Button>
               <Button
-              onPress={currentAudioPlaying?.isPlaying ? () => pauseAudio(currentAudioPlaying.id) : () => playAudio(currentAudioPlaying.id)}
-                contentContainerStyles={[styles.buttonContent,{ marginLeft: currentAudioPlaying?.isPlaying ? 0 : 2.5}]}
+                onPress={
+                  currentAudioPlaying?.isPlaying
+                    ? () => pauseAudio(currentAudioPlaying.id)
+                    : () => playAudio(currentAudioPlaying.id)
+                }
+                contentContainerStyles={[
+                  styles.buttonContent,
+                  { marginLeft: currentAudioPlaying?.isPlaying ? 0 : 2.5 }
+                ]}
                 buttonStyles={styles.playButton}
                 accessibilityLabel="Play"
               >
-                <Ionicons name={currentAudioPlaying?.isPlaying ? 'pause' : 'play'} size={28} color="white" />
+                <Ionicons
+                  name={currentAudioPlaying?.isPlaying ? "pause" : "play"}
+                  size={28}
+                  color="white"
+                />
               </Button>
             </View>
           </View>
         }
-        contentContainerStyle={styles.songsContainer}
+        contentContainerStyle={{
+          gap: 15,
+          paddingBottom: currentAudioPlaying ? 140 : 80
+        }}
       />
     </SafeAreaView>
   );
@@ -103,9 +116,5 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center"
-  },
-  songsContainer: {
-    gap: 15,
-    paddingBottom: 140
   }
 });

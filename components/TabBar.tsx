@@ -6,14 +6,16 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import FloatingPlayerWidget from '@/components/FloatingPlayerWidget'
+import { useAudio } from '@/hooks/useAudio'
 
 const TabBar = ({ state, descriptors, navigation }) => {
   const theme = useColorScheme() ?? "light";
   const colorFromProps = Colors[theme];
+  const { currentAudioPlaying } = useAudio()
 
   return (
     <View>
-      <FloatingPlayerWidget />
+      {currentAudioPlaying && <FloatingPlayerWidget />}
       <LinearGradient
         colors={
           theme === "dark"
