@@ -1,10 +1,11 @@
-import { Text, View, Button, useThemeColor } from "@/components/Themed";
+import { Text, View, Button } from "@/components/Themed";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import Colors from "@/constants/Colors";
 import { useAudio } from "@/hooks/useAudio";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { DurationSlider } from "@/components/DurationSlider";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import {StatusBar} from 'react-native';
 import logo from '@/assets/images/icon.png'
@@ -15,12 +16,13 @@ const blurhash =
 export default function MusicPlayer() {
   const { currentAudioPlaying, pauseAudio, playAudio, handleNext, handlePrevious } = useAudio();
   const theme = useColorScheme() ?? "light";
+  const colors = Colors[theme];
   
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
       colors={
-          [useThemeColor({}, 'background'), useThemeColor({},'primary')]
+          [colors.background, colors.primary]
         }
         start={{ x: 0.5, y: 1 }}
         end={{ x: 0.5, y: -0.6 }}
@@ -50,7 +52,7 @@ export default function MusicPlayer() {
               <Entypo
                 name="chevron-down"
                 size={24}
-                color={useThemeColor({}, "text")}
+                color={colors.text}
               />
             </Button>
           </View>
@@ -65,7 +67,7 @@ export default function MusicPlayer() {
             <Text
               style={{
                 fontSize: 12,
-                color: useThemeColor({}, "text")
+                color: colors.text
               }}
             >
               Playing from
@@ -74,7 +76,7 @@ export default function MusicPlayer() {
               style={{
                 fontSize: 19,
                 fontFamily: "Poppins-Bold",
-                color: useThemeColor({}, "text")
+                color: colors.text
               }}
             >
               {currentAudioPlaying?.playedFrom}
@@ -97,7 +99,7 @@ export default function MusicPlayer() {
               <Entypo
                 name="dots-two-vertical"
                 size={24}
-                color={useThemeColor({}, "text")}
+                color={colors.text}
               />
             </Button>
           </View>
@@ -131,7 +133,7 @@ export default function MusicPlayer() {
             style={{
               fontSize: 26,
               fontFamily: "Poppins-Bold",
-              color: useThemeColor({}, "text")
+              color: colors.text
             }}
           >
             {currentAudioPlaying?.title}
@@ -140,7 +142,7 @@ export default function MusicPlayer() {
             style={{
               fontSize: 15,
               fontFamily: "Poppins-Regular",
-              color: useThemeColor({}, "secondary")
+              color: colors.secondary
             }}
           >
             {currentAudioPlaying?.artist}
@@ -169,7 +171,7 @@ export default function MusicPlayer() {
               <Entypo
                 name="controller-jump-to-start"
                 size={28}
-                color={useThemeColor({}, "text")}
+                color={colors.text}
               />
             </Button>
           </View>
@@ -190,7 +192,7 @@ export default function MusicPlayer() {
               <Ionicons
                 name={currentAudioPlaying?.isPlaying ? "pause" : "play"}
                 size={32}
-                color={useThemeColor({}, "text")}
+                color={colors.text}
               />
             </Button>
           </View>
@@ -206,7 +208,7 @@ export default function MusicPlayer() {
               <Entypo
                 name="controller-next"
                 size={28}
-                color={useThemeColor({}, "text")}
+                color={colors.text}
               />
             </Button>
           </View>

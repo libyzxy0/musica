@@ -1,4 +1,6 @@
-import { View, Text, useThemeColor, Button } from "@/components/Themed";
+import { View, Text, Button } from "@/components/Themed";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import Colors from "@/constants/Colors";
 import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { Pressable } from "react-native";
@@ -18,9 +20,11 @@ type SongProps = {
 
 export function SongCard({ title, artist, image, id }) {
   const { playAudio, currentAudioPlaying } = useAudio();
+  const theme = useColorScheme() ?? "light";
+  const colors = Colors[theme];
   return (
     <Pressable
-      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, "playlist-7836502")}
+      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, currentAudioPlaying?.playedFrom ? currentAudioPlaying?.playedFrom : 'main')}
       
       style={({ pressed }) => [
         { backgroundColor: "transparent", opacity: pressed ? 0.8 : 1 },
@@ -46,10 +50,7 @@ export function SongCard({ title, artist, image, id }) {
             style={{
               fontSize: 17,
               fontFamily: "Poppins-Regular",
-              color: useThemeColor(
-                {},
-                currentAudioPlaying?.id === id ? "primary" : "text"
-              )
+              color: currentAudioPlaying?.id === id ? colors.primary : colors.text
             }}
           >
             {title}
@@ -57,7 +58,7 @@ export function SongCard({ title, artist, image, id }) {
           <Text
             style={{
               fontSize: 13,
-              color: useThemeColor({}, "secondary")
+              color: colors.secondary
             }}
           >
             {artist}
@@ -67,7 +68,7 @@ export function SongCard({ title, artist, image, id }) {
       <View
         style={{
           position: "absolute",
-          right: 20
+          right: 10
         }}
       >
         <Button
@@ -78,7 +79,7 @@ export function SongCard({ title, artist, image, id }) {
           <Entypo
             name="dots-two-vertical"
             size={18}
-            color={useThemeColor({}, "secondary")}
+            color={colors.secondary}
           />
         </Button>
       </View>

@@ -1,4 +1,4 @@
-import { View, Text, useThemeColor, Button } from "@/components/Themed";
+import { View, Text, Button } from "@/components/Themed";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,19 +15,20 @@ const blurhash =
 export default function FloatingPlayerWidget() {
   const { currentAudioPlaying, pauseAudio, playAudio } = useAudio();
   const theme = useColorScheme() ?? "light";
-  const colorFromProps = Colors[theme];
+  const colors = Colors[theme];
+  
   return (
     <Pressable onPress={() => router.push('/audioplayer')}>
     <LinearGradient
         colors={
           theme === "dark"
             ? ["rgba(0,0,0,0.6)", "rgba(0,0,0,0.3)"]
-            : ["rgba(255,255,255,0.6)", "rgba(255,255,255,0.3)"]
+            : [colors.foreground, colors.foreground]
         }
         start={{ x: 0.5, y: 1 }}
         end={{ x: 0.5, y: 0 }}
         style={[
-          { backgroundColor: colorFromProps.foreground },
+          { backgroundColor: colors.foreground },
           styles.playerWidget
         ]}
       >
@@ -55,7 +56,7 @@ export default function FloatingPlayerWidget() {
               style={{
                 fontSize: 14,
                 fontFamily: "Poppins-Regular",
-                color: useThemeColor({}, "text"),
+                color: colors.text,
                 paddingTop: 3
               }}
             >
@@ -65,7 +66,7 @@ export default function FloatingPlayerWidget() {
               style={{
                 fontSize: 12,
                 fontFamily: "Poppins-Regular",
-                color: useThemeColor({}, "secondary"),
+                color: colors.secondary,
               }}
             >
               {currentAudioPlaying?.artist}
@@ -89,7 +90,7 @@ export default function FloatingPlayerWidget() {
             }}
             accessibilityLabel="Favorite"
           >
-            <Ionicons name="heart-outline" size={24} color={colorFromProps.primary} />
+            <Ionicons name="heart-outline" size={24} color={colors.text} />
           </Button>
           <Button
           onPress={currentAudioPlaying?.isPlaying ? () => pauseAudio(currentAudioPlaying.id) : () => playAudio(currentAudioPlaying.id)}
@@ -99,7 +100,7 @@ export default function FloatingPlayerWidget() {
             }}
             accessibilityLabel="Play/Pause"
           >
-            <Ionicons name={currentAudioPlaying?.isPlaying ? 'pause' : 'play'} size={24} color={colorFromProps.primary} />
+            <Ionicons name={currentAudioPlaying?.isPlaying ? 'pause' : 'play'} size={24} color={colors.text} />
           </Button>
         </View>
           <View style={{
@@ -107,7 +108,7 @@ export default function FloatingPlayerWidget() {
           bottom: 2,
           height: 2,
           borderRadius: 6,
-          backgroundColor: useThemeColor({}, 'primary'),
+          backgroundColor: colors.primary,
           width: `${parseInt(currentAudioPlaying?.durationPercentage)}%`,
           left: 5
         }}></View>

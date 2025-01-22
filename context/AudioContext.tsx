@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, ReactNode } from "react";
 import * as MediaLibrary from "expo-media-library";
 import { getMetadata } from "@/utils/getAudioMetadata";
 import { Audio } from "expo-av";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type AudioType = {
   id: string;
@@ -26,6 +27,7 @@ type CurrentPlayingAudioType = {
 
 type AudioContextType = {
   audioFiles: AudioType[];
+  artistsList: ArtistType[];
   currentAudioPlaying: any | null;
   isGranted: boolean;
   setAudioFiles: (files: AudioType[]) => void;
@@ -37,9 +39,15 @@ type AudioContextType = {
   handlePrevious: () => Promise<void>;
   audioLoading: boolean;
 };
+type ArtistType = {
+  name: string;
+  totalSongs: number;
+  image: string;
+};
 
 const defaultValues: AudioContextType = {
   audioFiles: [],
+  artistsList: [],
   currentAudioPlaying: null,
   getPermissions: async () => {},
   getAllAudioFiles: async () => {},
@@ -63,6 +71,178 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
     useState<CurrentPlayingAudioType | null>(null);
   const [permission, requestPermission] = MediaLibrary.usePermissions();
   const [sound, setSound] = useState();
+  const [artistsList, setArtistsList] = useState<ArtistType[]>([]);
+
+  const [currentPlaylist, setCurrentPlaylist] = useState(null);
+
+  const createPlaylist = async (name: string) => {
+    try {
+      if (!name.trim()) {
+        throw new Error("Playlist name cannot be empty");
+      }
+
+      const genPlayListID = () =>
+        Math.floor(Math.random() * 90000000) + 10000000;
+
+      const playlists = await getAllPlaylist();
+
+      const playlistExists = playlists.some(playlist => playlist.name === name);
+      if (playlistExists) {
+        throw new Error(`A playlist with the name "${name}" already exists`);
+      }
+
+      const newPlaylist = {
+        id: genPlayListID(),
+        name,
+        totalSongs: 0
+      };
+
+      const updatedPlaylists = [...playlists, newPlaylist];
+      await savePlaylists(updatedPlaylists);
+
+      console.log(`Playlist "${name}" created successfully`);
+    } catch (error) {
+      console.error(
+        "Error creating playlist:",
+        error instanceof Error ? error.message : error
+      );
+    }
+  };
+
+  const deletePlaylist = async (playlistID: string) => {
+    try {
+      const playlists = await getAllPlaylist();
+      const updatedPlaylists = playlists.filter(
+        playlist => playlist.id !== playlistID
+      );
+      await savePlaylists(updatedPlaylists);
+      console.log(`Playlist with ID "${playlistID}" deleted successfully`);
+    } catch (error) {
+      console.error(
+        "Error deleting playlist:",
+        error instanceof Error ? error.message : error
+      );
+    }
+  };
+
+  const addSongToPlaylist = async (assetID: string, playlistID: string) => {
+    try {
+      const playlists = await getAllPlaylist();
+      const playlistIndex = playlists.findIndex(
+        playlist => playlist.id === playlistID
+      );
+
+      if (playlistIndex === -1) {
+        throw new Error(`Playlist with ID "${playlistID}" not found`);
+      }
+
+      const playlist = playlists[playlistIndex];
+      const updatedPlaylist = {
+        ...playlist,
+        totalSongs: playlist.totalSongs + 1,
+        songs: [...(playlist.songs || []), assetID]
+      };
+
+      const updatedPlaylists = [
+        ...playlists.slice(0, playlistIndex),
+        updatedPlaylist,
+        ...playlists.slice(playlistIndex + 1)
+      ];
+
+      await savePlaylists(updatedPlaylists);
+      console.log(
+        `Song with ID "${assetID}" added to playlist "${playlist.name}"`
+      );
+    } catch (error) {
+      console.error(
+        "Error adding song to playlist:",
+        error instanceof Error ? error.message : error
+      );
+    }
+  };
+
+  const removeSongFromPlaylist = async (
+    assetID: string,
+    playlistID: string
+  ) => {
+    try {
+      const playlists = await getAllPlaylist();
+      const playlistIndex = playlists.findIndex(
+        playlist => playlist.id === playlistID
+      );
+
+      if (playlistIndex === -1) {
+        throw new Error(`Playlist with ID "${playlistID}" not found`);
+      }
+
+      const playlist = playlists[playlistIndex];
+      const updatedPlaylist = {
+        ...playlist,
+        totalSongs: playlist.totalSongs - 1,
+        songs: playlist.songs.filter(songID => songID !== assetID)
+      };
+
+      const updatedPlaylists = [
+        ...playlists.slice(0, playlistIndex),
+        updatedPlaylist,
+        ...playlists.slice(playlistIndex + 1)
+      ];
+
+      await savePlaylists(updatedPlaylists);
+      console.log(
+        `Song with ID "${assetID}" removed from playlist "${playlist.name}"`
+      );
+    } catch (error) {
+      console.error(
+        "Error removing song from playlist:",
+        error instanceof Error ? error.message : error
+      );
+    }
+  };
+
+  const getPlaylistData = async (playlistID: string) => {
+    try {
+      const playlistsData = await AsyncStorage.getItem("playlists");
+      const data = playlistsData ? JSON.parse(playlistsData) : [];
+      const playlist = data.find(item => item.id === playlistID);
+
+      if (!playlist) {
+        throw new Error(`Playlist with ID "${playlistID}" not found`);
+      }
+
+      return playlist;
+    } catch (error) {
+      console.error(
+        "Error fetching playlist data:",
+        error instanceof Error ? error.message : error
+      );
+      return null;
+    }
+  };
+
+  const getAllPlaylist = async () => {
+    try {
+      const playlistsData = await AsyncStorage.getItem("playlists");
+      return playlistsData ? JSON.parse(playlistsData) : [];
+    } catch (error) {
+      console.error(
+        "Error fetching all playlists:",
+        error instanceof Error ? error.message : error
+      );
+      return [];
+    }
+  };
+
+  const savePlaylists = async (playlists: Playlist[]): Promise<void> => {
+    try {
+      await AsyncStorage.setItem("playlists", JSON.stringify(playlists));
+    } catch (error) {
+      console.error(
+        "Error saving playlists:",
+        error instanceof Error ? error.message : error
+      );
+    }
+  };
 
   const getPermissions = async () => {
     requestPermission();
@@ -85,7 +265,6 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
   const getAllAudioFiles = async () => {
     try {
       setAudioLoading(true);
-      console.log("Loading audio files...");
       const media = await MediaLibrary.getAssetsAsync({
         mediaType: "audio",
         first: 500
@@ -97,18 +276,17 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         return;
       }
 
-      console.log("Assets loaded, processing metadata...");
-
       for (const asset of media.assets) {
         try {
-          if(asset.uri.endsWith(".adt")) return;
+          if (asset.uri.endsWith(".adt")) return;
           const { metadata } = await getMetadata(asset.uri);
-          console.log("metadata:",metadata)
-    
+
           const newAudioFile: AudioType = {
             id: asset.id,
             uri: asset.uri,
-            title: metadata.artwork ? metadata.name : (asset.filename.split(".mp3"))[0],
+            title: metadata.artwork
+              ? metadata.name
+              : asset.filename.slice(0, asset.filename.lastIndexOf(".")),
             artist: metadata.artwork ? metadata.artist : "Unknown Artist",
             image: metadata.artwork || null
           };
@@ -122,7 +300,23 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
             );
           });
 
-          console.log(`Loaded metadata for: ${newAudioFile.title}`);
+          setArtistsList(prevArtists => {
+            const artistName = metadata.artwork ? metadata.artist : "Unknown";
+            const existing = prevArtists?.find(
+              artist => artist.name === artistName
+            );
+
+            return existing
+              ? prevArtists.map(artist =>
+                  artist.name === artistName
+                    ? { ...artist, totalSongs: artist.totalSongs + 1 }
+                    : artist
+                )
+              : [
+                  ...prevArtists,
+                  { name: artistName, totalSongs: 1, image: "" }
+                ];
+          });
         } catch (error) {
           console.error(
             `Error fetching metadata for asset ${asset.id}:`,
@@ -130,8 +324,6 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
           );
         }
       }
-
-      console.log("Finished processing audio files.");
     } catch (error) {
       console.error("Error fetching audio files:", error);
     } finally {
@@ -260,6 +452,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
     <AudioContext.Provider
       value={{
         audioFiles,
+        artistsList,
         currentAudioPlaying,
         getPermissions,
         getAllAudioFiles,

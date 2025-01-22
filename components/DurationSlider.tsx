@@ -2,6 +2,7 @@ import Slider from "@react-native-community/slider";
 import { Text, View, useThemeColor } from "@/components/Themed";
 import { useAudio } from "@/hooks/useAudio";
 import { useState } from "react";
+import { colors } from '@/utils/getColors'
 
 export function DurationSlider() {
   const [holdValue, setHoldValue] = useState(false);

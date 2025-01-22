@@ -1,16 +1,17 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { View, Text, useThemeColor, Button } from "@/components/Themed";
+import { View, Text, Button } from "@/components/Themed";
 import TabBarButton from "@/components/TabBarButton";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
+
 import { LinearGradient } from "expo-linear-gradient";
 import FloatingPlayerWidget from '@/components/FloatingPlayerWidget'
 import { useAudio } from '@/hooks/useAudio'
 
 const TabBar = ({ state, descriptors, navigation }) => {
   const theme = useColorScheme() ?? "light";
-  const colorFromProps = Colors[theme];
+  const colors = Colors[theme];
   const { currentAudioPlaying } = useAudio()
 
   return (
@@ -30,7 +31,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
           const { options } = descriptors[route.key];
           const label = options.tabBarLabel || options.title || route.name;
 
-          if (["_sitemap", "+not-found"].includes(route.name)) return null;
+          if (["_sitemap", "+not-found","playlist-songs"].includes(route.name)) return null;
 
           const isFocused = state.index === index;
           const onPress = () => !isFocused && navigation.navigate(route.name);
@@ -42,7 +43,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
               isFocused={isFocused}
               routeName={route.name}
               color={
-                isFocused ? colorFromProps.primary : colorFromProps.secondary
+                isFocused ? colors.primary : colors.secondary
               }
               label={label}
             />

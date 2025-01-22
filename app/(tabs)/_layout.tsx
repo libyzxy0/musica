@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Tabs } from "expo-router";
 import TabBar from "@/components/TabBar";
-import { View, useThemeColor } from "@/components/Themed";
+import { View } from "@/components/Themed";
 
 export default function _layout() {
   return (
@@ -11,12 +11,6 @@ export default function _layout() {
         headerShown: false
       }}
     >
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: "Favorites"
-        }}
-      />
       <Tabs.Screen
         name="playlist"
         options={{

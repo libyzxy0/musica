@@ -10,19 +10,19 @@ import { useAudio } from "@/hooks/useAudio";
 
 export default function Songs() {
   const theme = useColorScheme() ?? "light";
-  const colorFromProps = Colors[theme];
-  const { audioFiles: songsData, getPermissions } = useAudio();
+  const colors = Colors[theme];
+  const { audioFiles, getPermissions } = useAudio();
   const { currentAudioPlaying, pauseAudio, playAudio, audioLoading } = useAudio();
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: colorFromProps.background
+        backgroundColor: colors.background
       }}
     >
       <Header name="Songs" />
       <FlatList
-        data={songsData}
+        data={audioFiles}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <SongCard
@@ -36,8 +36,8 @@ export default function Songs() {
           <View style={styles.headerContainer}>
             <View>
               <Text style={styles.headerTitle}>All Songs</Text>
-              <Text style={{ fontSize: 14, color: colorFromProps.secondary }}>
-                {audioLoading ? 'Loading songs...' : `${songsData.length} songs`}
+              <Text style={{ fontSize: 14, color: colors.secondary }}>
+                {audioLoading ? 'Loading songs...' : `${audioFiles.length} songs`}
               </Text>
             </View>
             <View style={styles.buttonCon}>
@@ -49,14 +49,14 @@ export default function Songs() {
                 <Ionicons
                   name="shuffle"
                   size={32}
-                  color={colorFromProps.primary}
+                  color={colors.primary}
                 />
               </Button>
               <Button
                 onPress={
                   currentAudioPlaying?.isPlaying
                     ? () => pauseAudio(currentAudioPlaying.id)
-                    : () => playAudio(currentAudioPlaying.id)
+                    : () => playAudio(currentAudioPlaying?.id ? currentAudioPlaying.id : audioFiles[0].id, 'main')
                 }
                 contentContainerStyles={[
                   styles.buttonContent,

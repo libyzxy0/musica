@@ -11,9 +11,9 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { AudioProvider } from "@/context/AudioContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useThemeColor } from '@/components/Themed'
-import * as SystemUI from 'expo-system-ui';
-import { useAudio } from '@/hooks/useAudio'
+import Colors from "@/constants/Colors";
+import * as SystemUI from "expo-system-ui";
+import { useAudio } from "@/hooks/useAudio";
 /*
 import TrackPlayer from 'react-native-track-player'
 import { playbackService } from '@/utils/playbackService'
@@ -27,26 +27,26 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const theme = useColorScheme() ?? "light";
+  const colors = Colors[theme];
   const [loaded] = useFonts({
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf")
   });
-  
+
   /* Fix for white screen flash when navigating */
-  SystemUI.setBackgroundColorAsync(useThemeColor({}, 'background'))
-  
+  SystemUI.setBackgroundColorAsync(colors.background);
+
   /*
   useSetupTrackPlayer({
     onLoad: () => console.log("Track player loaded") //Hide the splash
   })
   */
-  
-  
-  
+
   useEffect(() => {
-    if(loaded) {
-      SplashScreen.hideAsync()
+    if (loaded) {
+      SplashScreen.hideAsync();
     }
   }, [loaded]);
 
@@ -59,13 +59,15 @@ export default function RootLayout() {
       <AudioProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="audioplayer"
-            options={{ headerShown: false }}
-          />
+          <Stack.Screen name="audioplayer" options={{ headerShown: false }} />
+          <Stack.Screen name="playlist-songs" options={{ headerShown: false }} />
           <Stack.Screen
             name="about"
             options={{ headerShown: true, title: "About" }}
+          />
+          <Stack.Screen
+            name="settings"
+            options={{ headerShown: true, title: "Settings" }}
           />
           <Stack.Screen name="+not-found" />
         </Stack>
