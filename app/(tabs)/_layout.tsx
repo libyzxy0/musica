@@ -14,19 +14,29 @@ export default function _layout() {
       <Tabs.Screen
         name="playlist"
         options={{
-          title: "Playlist"
+          title: "Playlist",
+          animation: 'fade' 
+        }}
+      />
+      <Tabs.Screen
+        name="playlist-songs"
+        options={{
+          title: "Playlist",
+          animation: 'fade' 
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
-          title: "Songs"
+          title: "Songs",
+          animation: 'fade' 
         }}
       />
       <Tabs.Screen
         name="artists"
         options={{
-          title: "Artists"
+          title: "Artists",
+          animation: 'fade' 
         }}
       />
     </Tabs>

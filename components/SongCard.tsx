@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { Pressable } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 import { useAudio } from "@/hooks/useAudio";
 import { router } from 'expo-router';
 import logo from '@/assets/images/icon.png'
@@ -19,12 +19,13 @@ type SongProps = {
 };
 
 export function SongCard({ title, artist, image, id }) {
-  const { playAudio, currentAudioPlaying } = useAudio();
+  const { playAudio, currentAudioPlaying, currentPlaylist } = useAudio();
   const theme = useColorScheme() ?? "light";
   const colors = Colors[theme];
+  
   return (
     <Pressable
-      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, currentAudioPlaying?.playedFrom ? currentAudioPlaying?.playedFrom : 'main')}
+      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, currentPlaylist.name)}
       
       style={({ pressed }) => [
         { backgroundColor: "transparent", opacity: pressed ? 0.8 : 1 },
@@ -48,12 +49,12 @@ export function SongCard({ title, artist, image, id }) {
         <View>
           <Text
             style={{
-              fontSize: 17,
+              fontSize: 16,
               fontFamily: "Poppins-Regular",
               color: currentAudioPlaying?.id === id ? colors.primary : colors.text
             }}
           >
-            {title}
+            {title.length > 26 ? title.slice(0, 26) + '...' : title}
           </Text>
           <Text
             style={{
@@ -68,7 +69,9 @@ export function SongCard({ title, artist, image, id }) {
       <View
         style={{
           position: "absolute",
-          right: 10
+          right: 10,
+          flex: 1,
+          flexDirection: 'row-reverse'
         }}
       >
         <Button

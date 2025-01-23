@@ -15,7 +15,7 @@ export default function PlaylistSongs() {
   const theme = useColorScheme() ?? "light";
   const colors = Colors[theme];
   const { audioFiles: songsData, getPermissions } = useAudio();
-  const { currentAudioPlaying, pauseAudio, playAudio, audioLoading } =
+  const { currentAudioPlaying, pauseAudio, playAudio, audioLoading, currentPlaylist } =
     useAudio();
   return (
     <View
@@ -53,7 +53,7 @@ export default function PlaylistSongs() {
                 <Ionicons name="arrow-back" size={24} color={colors.text} />
               </Pressable>
               <View transparent={true}>
-                <Text style={styles.headerTitle}>Liked Songs</Text>
+                <Text style={styles.headerTitle}>{currentPlaylist.name}</Text>
                 <Text style={{ fontSize: 14, color: colors.secondary }}>
                   {audioLoading
                     ? "Loading songs..."

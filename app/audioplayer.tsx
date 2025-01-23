@@ -17,7 +17,6 @@ export default function MusicPlayer() {
   const { currentAudioPlaying, pauseAudio, playAudio, handleNext, handlePrevious } = useAudio();
   const theme = useColorScheme() ?? "light";
   const colors = Colors[theme];
-  
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
