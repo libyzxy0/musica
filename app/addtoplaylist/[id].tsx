@@ -19,22 +19,59 @@ import Colors from "@/constants/Colors";
 import {
   SafeAreaView
 } from "react-native-safe-area-context";
-import { FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  FlatList
+} from 'react-native';
+import {
+  AntDesign,
+  Feather
+} from '@expo/vector-icons';
+import {
+  useEffect,
+  useState
+} from 'react'
 
 export default function AddToPlaylist() {
-  const {
-    id
-  } = useLocalSearchParams < {
-    id: string
-  } > ();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const {
     audioFiles,
-    allPlaylist
+    allPlaylist,
+    addSongToPlaylist,
+    removeSongFromPlaylist,
+    getPlaylistsContainingSong
   } = useAudio();
-  const songToAdd = (audioFiles.find(t => t.id === id));
+  const songToAdd = audioFiles.find(t => t.id === id);
   const theme = useColorScheme() ?? "light";
   const colors = Colors[theme];
+  const [includedTo, setIncludedTo] = useState([]);
+
+  useEffect(() => {
+    const getD = async () => {
+      const whichPlaylists = await getPlaylistsContainingSong(songToAdd.id);
+      setIncludedTo(whichPlaylists || []);
+    }
+    getD();
+  }, []);
+
+  const handleSongAddOrRemove = async (playlistID: string) => {
+    const isIncluded = includedTo.some(pl => pl.id === playlistID);
+    const updatedIncludedTo = isIncluded
+      ? includedTo.filter(pl => pl.id !== playlistID)
+      : [...includedTo, allPlaylist.find(pl => pl.id === playlistID)];
+
+    setIncludedTo(updatedIncludedTo);
+
+    try {
+      if (isIncluded) {
+        await removeSongFromPlaylist(songToAdd.id, playlistID);
+      } else {
+        await addSongToPlaylist(songToAdd.id, playlistID);
+      }
+    } catch (error) {
+      setIncludedTo(includedTo);
+      console.error("Failed to update playlist:", error);
+    }
+  };
 
   const renderItem = ({ item }) => (
     <Pressable
@@ -42,57 +79,37 @@ export default function AddToPlaylist() {
         styles.card,
         { backgroundColor: colors.foreground, opacity: pressed ? 0.5 : 1 }
       ]}
-      onPress={() => {
-        console.log(`Adding song to playlist: ${item.name}`);
-      }}
+      onPress={() => handleSongAddOrRemove(item.id)}
     >
       <Text style={[styles.title, { color: colors.text }]}>{item.name}</Text>
-      <Ionicons name="add-circle" size={24} color={colors.primary} />
+      {includedTo.some(pl => pl.id === item.id) ? (
+        <AntDesign name="pluscircle" size={24} color={colors.primary} />
+      ) : (
+        <AntDesign name="pluscircleo" size={23} color={colors.text} />
+      )}
     </Pressable>
   );
 
   return (
-    <SafeAreaView
-      style={ {
-        flex: 1,
-        backgroundColor: colors.background
-      }}
-      >
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <FlatList
         data={allPlaylist}
         ListHeaderComponent={
-        <View style={ {
-          flex: 1,
-          alignItems: 'center',
-          marginBottom: 60
-        }}>
-          <Text style={ {
-          fontFamily: 'Poppins-Bold',
-            fontSize: 20,
-            color: colors.text,
-            marginBottom: 20
-          }}>Select where playlist to add</Text>
-          <Text style={ {
-            fontFamily: 'Poppins-Bold',
-            fontSize: 35,
-            color: colors.primary
-          }}>{songToAdd.title}</Text>
-          <Text style={ {
-            fontSize: 16,
-            color: colors.secondary
-          }}>{songToAdd.artist}</Text>
-        </View>
+          <View style={{ flex: 1, alignItems: 'center', marginBottom: 60 }}>
+            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: colors.text, marginBottom: 20 }}>
+              Select where playlist to add
+            </Text>
+            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 35, color: colors.primary }}>
+              {songToAdd.title}
+            </Text>
+            <Text style={{ fontSize: 16, color: colors.secondary }}>{songToAdd.artist}</Text>
+          </View>
         }
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        contentContainerStyle={ {
-          marginTop: 10,
-          paddingHorizontal: 10,
-          gap: 10,
-        }}
+        contentContainerStyle={{ marginTop: 10, paddingHorizontal: 10, gap: 10 }}
         numColumns={1}
-        />
+      />
     </SafeAreaView>
   );
 }

@@ -66,6 +66,7 @@ export default function Songs() {
               title={item.title}
               artist={item.artist}
               image={item.image}
+              isInMain={true}
               />
           )}
           ListHeaderComponent={

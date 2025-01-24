@@ -16,16 +16,17 @@ type SongProps = {
   title: string;
   artist: string;
   image: string;
+  isInMain?: boolean;
 };
 
-export function SongCard({ title, artist, image, id }) {
+export function SongCard({ title, artist, image, id, isInMain }) {
   const { playAudio, currentAudioPlaying, currentPlaylist } = useAudio();
   const theme = useColorScheme() ?? "light";
   const colors = Colors[theme];
   
   return (
     <Pressable
-      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, currentPlaylist.name)}
+      onPress={currentAudioPlaying?.id === id ? () => router.push('/audioplayer') : () => playAudio(id, isInMain ? 'main' : currentPlaylist.id)}
       
       style={({ pressed }) => [
         { backgroundColor: "transparent", opacity: pressed ? 0.8 : 1 },

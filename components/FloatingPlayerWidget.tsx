@@ -31,10 +31,10 @@ import {
   Pressable
 } from "react-native";
 import React, {
-  useCallback,
-  useMemo,
-  useRef
+  useEffect,
+  useState
 } from 'react';
+
 const blurhash =
 "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
@@ -42,12 +42,20 @@ export default function FloatingPlayerWidget() {
   const {
     currentAudioPlaying,
     pauseAudio,
-    playAudio
+    playAudio,
+    getPlaylistsContainingSong
   } = useAudio();
+  const [includedTo, setIncludedTo] = useState(false);
   const theme = useColorScheme() ?? "light";
   const colors = Colors[theme];
 
-
+  useEffect(() => {
+    const getD = async () => {
+      const whichPlaylists = await getPlaylistsContainingSong(currentAudioPlaying.id);
+      setIncludedTo(whichPlaylists.length > 0 ? true : false);
+    }
+    getD();
+  }, [currentAudioPlaying]);
 
   return (
     <>
@@ -122,7 +130,7 @@ export default function FloatingPlayerWidget() {
               }}
               accessibilityLabel="Add to Playlist"
               >
-              <Feather name="plus-circle" size={23} color={colors.text} />
+              <Feather name="plus-circle" size={23} color={includedTo ? colors.primary : colors.text} />
             </Button>
             <Button
               onPress={currentAudioPlaying?.isPlaying ? () => pauseAudio(currentAudioPlaying.id): () => playAudio(currentAudioPlaying.id)}

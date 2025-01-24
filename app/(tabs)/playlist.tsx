@@ -81,7 +81,7 @@ export default function Playlist() {
         >
         <LinearGradient
           colors={
-          [colors.foreground, colors.foreground]
+          [colors.background, colors.foreground]
 
           }
           start={ { x: 0.5, y: 1 }}
@@ -132,7 +132,7 @@ export default function Playlist() {
               <TextInput
                 onChangeText={(name) => setPlaylistName(name)}
                 value={playlistName}
-                placeholder="pang relapse"
+                placeholder="i love RN"
                 placeholderTextColor={colors.secondary}
                 style={ {
                   backgroundColor: colors.foreground,
@@ -140,6 +140,7 @@ export default function Playlist() {
                   borderColor: colors.borderColor,
                   borderRadius: 6,
                   paddingHorizontal: 8,
+                  paddingVertical: 12,
                   color: colors.text,
                   fontFamily: "Poppins-Regular"
                 }}
@@ -159,7 +160,8 @@ export default function Playlist() {
           </View>
         </LinearGradient>
       </Modal>
-
+      
+      {allPlaylist && allPlaylist.length > 0 ?
       <FlatList
         data={allPlaylist}
         ListHeaderComponent={
@@ -235,9 +237,34 @@ export default function Playlist() {
         }}
         numColumns={2}
         columnWrapperStyle={ {
-          justifyContent: "space-evenly"
+          justifyContent: allPlaylist?.length > 1 ? 'space-evenly' : 'flex-start',
         }}
-        />
+        /> : <View style={{
+          marginTop: 200
+        }}>
+          <Text style={{
+            textAlign: 'center',
+            color: colors.text,
+            fontFamily: 'Poppins-Bold',
+            fontSize: 32,
+          }}>Ohh nooo 😱😱</Text>
+          <Text style={{
+            textAlign: 'center',
+            color: colors.secondary,
+            fontSize: 15,
+          }}>There's no playlist yet!</Text>
+            <Button
+            onPress={() => setModalVisible(true)}
+            buttonStyles={{
+              marginHorizontal: 100,
+              marginTop: 30
+            }}>
+              <Text style={{
+                fontFamily: 'Poppins-Bold',
+                textAlign: 'center',
+              }}>Create Playlist</Text>
+            </Button>
+        </View>}
     </SafeAreaView>
   );
 }
